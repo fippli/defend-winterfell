@@ -139,6 +139,12 @@
   (-> (create-empty-state)
       (add-enemy "nightKing" 1)))
 
+(defn tick
+  "Do the ticky thing"
+  {}
+  [state]
+  state)
+
 (defn main
   "Main function"
   []
