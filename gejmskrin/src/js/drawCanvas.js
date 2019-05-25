@@ -1,5 +1,5 @@
 const drawCanvas = (() => {
-  return (state, canvasElement, context) => {
+  return (canvasElement, context) => (state) => {
     return clearCanvas(state, canvasElement, context)
       .then(drawBackground(context))
       .then(drawImageArray(context, state.enemies)) // Draw enemies
