@@ -1,7 +1,7 @@
 (ns njin.core
-  (:require [clojure.test :refer [function? is]
-             [njin.definitions :refer [get-definition
-                                       get-definitions]]]))
+  (:require [clojure.test :refer [function? is]]
+            [njin.definitions :refer [get-definition
+                                      get-definitions]]))
 
 (defn create-empty-state
   "Creates an empty state"
@@ -9,25 +9,8 @@
            (is (= (keys (create-empty-state))
                   [:enemies :defenders :lives :wave :gold])))}
   []
-  {:enemies [{:bounty 7
-              :health 60
-              :id 1
-              :type "nightKing"
-              :position {:x 0
-                         :y 0}
-              :direction {:x 10
-                          :y 0}}
-             {:bounty 7
-              :health 60
-              :id 2
-              :type "nightKing"
-              :position {:x 0
-                         :y 0}
-              :direction {:x 10
-                          :y 0}}]
-   :defenders [:position {:x 500
-                          :y 100
-                          :range 50}]
+  {:enemies []
+   :defenders []
    :lives 3
    :wave 0
    :gold 100})
@@ -64,18 +47,36 @@
   [enemy]
   (get enemy :bounty))
 
+(defn add-enemy
+  "Add an enemy to the state"
+  {:test (fn [] 
+           (is (= (-> (create-empty-state)
+                      (add-enemy "nightKing" 1)
+                      (get :enemies)
+                      (first)
+                      (get :type))
+                  "nightKing")))}
+  [state type id]
+  (let [enemy (->
+               (get-definition type)
+               (assoc :id id))]
+    (update state :enemies #(conj % enemy))))
+
 (defn enemy-die
   "Actions when an enemy dies"
 
   {:test (fn []
            ; Check that enemy is removed
            (is (= (-> (create-empty-state)
+                      (add-enemy "nightKing" 1)
+                      (add-enemy "nightKing" 2)
                       (enemy-die 1)
                       (get :enemies)
                       (count))
                   1))
            ; Check that gold is increased
            (is (= (as-> (create-empty-state) $
+                    (add-enemy $ "nightKing" 1)
                     (enemy-die $ 1)
                     (get $ :gold))
                   107)))}
@@ -92,17 +93,10 @@
 (defn start-game
   "Returns start state of the game"
   []
-  (create-empty-state))
+  (-> (create-empty-state)
+      (add-enemy "nightKing" 1)))
 
 (defn main
   "Main function"
   []
   (println "Main function"))
-
-(defn add-enemy
-  "Add an enemy to the state"
-  [state type id]
-  (let [enemy (->
-               (get-definition type)
-               (assoc :id id))]
-    (update state :enemies #(conj % enemy))))

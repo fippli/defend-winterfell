@@ -9,7 +9,7 @@
   (vals @definitions-atom))
 
 (defn get-definition
-  "Gets the definition identified by the name."
+  "Gets the definition identified by the type."
   {:test (fn []
            (is (= (get-definition "nightKing")
                 {:type "nightKing"
