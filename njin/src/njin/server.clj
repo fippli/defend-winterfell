@@ -1,6 +1,6 @@
 (ns njin.server
   (:require [org.httpkit.server]
-            [njin.game :refer [create-game! tick!]]
+            [njin.game :refer [create-game! tick! add-defender!]]
             [clojure.data.json]))
 
 (defn game-response
@@ -22,6 +22,17 @@
     (time
      (-> (tick!)
          (game-response)))
+
+    "/action"
+    (time (let [body (clojure.data.json/read-str (slurp (:body request)))
+                action-id (get body "actionId")
+                type (get body "type")
+                position (get body "position")]
+            (case action-id
+              "defender" (-> (add-defender! type position)
+                             (game-response))
+              (-> (tick!)
+                  (game-response)))))
 
     {:status  404
      :headers {"Access-Control-Allow-Origin" "*"}}))
