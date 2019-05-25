@@ -16,6 +16,7 @@ const actionHandler = (() => {
   };
 
   const getActionBody = (actionName) => {
+    console.log("Triggering action:", actionName);
     return towerPrep;
   }
 
