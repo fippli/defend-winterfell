@@ -28,6 +28,15 @@
    :wave 0
    :gold 100})
 
+(defn lose-a-life
+  "removes a life"
+  [state]
+  (update state :lives (fn [lives] (- lives 1))))
+
+(defn next-wave
+  "adds 1 to wave"
+  [state]
+  (update state :wave (fn [wave] (+ wave 1))))
 (defn increase-gold
   "Increases the amount of gold"
   [state amount]
@@ -82,3 +91,13 @@
   "Main function"
   []
   (println "Main function"))
+
+(defn add-enemy
+  "Add an enemy to the state"
+  [state]
+  (let [enemy {:bounty 7
+               :health 60
+               :id 2
+               :position {:x 10 :y 0}
+               :direction {:x 10 :y 0}}]
+    (update state :enemies #(conj % enemy))))
