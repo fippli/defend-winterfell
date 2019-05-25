@@ -31,12 +31,12 @@
       //   height: 100,
       // },
       nightKing: {
-        src: 'art/night-king.svg',
+        src: 'art/whiteWalker.png',
         width: 44,
         height: 80,
       },
       aryaStark: {
-        src: 'art/arya-stark.svg',
+        src: 'art/arya.png',
         width: 44,
         height: 80,
       },
