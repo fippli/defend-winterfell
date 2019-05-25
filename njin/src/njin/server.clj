@@ -18,7 +18,7 @@
     "/createGame"
     (time (game-response (create-game!)))
 
-    "/endTurn"
+    "/tick"
     (time
      (-> (tick!)
          (game-response)))
