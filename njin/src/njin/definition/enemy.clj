@@ -13,3 +13,4 @@
                             :y 0}}})
 
 (definitions/add-definitions! enemy-definitions)
+(println "Definitions loaded")

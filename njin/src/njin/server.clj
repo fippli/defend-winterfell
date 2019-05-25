@@ -25,9 +25,11 @@
 
 (defn start!
   []
-  (org.httpkit.server/run-server (fn [request]
-                                   (handle-request request))
-                                 {:port 8001}))
+  (do
+    (println "Server started")
+    (org.httpkit.server/run-server (fn [request]
+                                     (handle-request request))
+                                   {:port 8001})))
 
 (defn stop!
   []

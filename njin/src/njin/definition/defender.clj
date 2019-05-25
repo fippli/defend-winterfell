@@ -8,3 +8,4 @@
                        :range 50}}})
 
 (definitions/add-definitions! defender-definitions)
+(println "Definitions loaded")
