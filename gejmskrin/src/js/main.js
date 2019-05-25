@@ -3,33 +3,33 @@
 
   const state = {
     images: {
-      grass: {
-        src: 'art/grass.svg',
+      background: {
+        src: 'art/winterfell.png',
         position: {
           x: 0,
           y: 0,
         },
-        width: 800,
-        height: 600,
+        width: 960,
+        height: 640,
       },
-      road: {
-        src: 'art/road.svg',
-        position: {
-          x: 250,
-          y: 0,
-        },
-        width: 300,
-        height: 600,
-      },
-      castle: {
-        src: 'art/winterfell.svg',
-        position: {
-          x: 350,
-          y: 500,
-        },
-        width: 100,
-        height: 100,
-      },
+      // road: {
+      //   src: 'art/road.svg',
+      //   position: {
+      //     x: 250,
+      //     y: 0,
+      //   },
+      //   width: 300,
+      //   height: 600,
+      // },
+      // castle: {
+      //   src: 'art/winterfell.svg',
+      //   position: {
+      //     x: 350,
+      //     y: 500,
+      //   },
+      //   width: 100,
+      //   height: 100,
+      // },
       nightKing: {
         src: 'art/night-king.svg',
         width: 44,
@@ -61,7 +61,7 @@
     actionHandler.handleActions(state)
       .then(drawCanvas(canvasElement, context))
       .then(state => {
-        // tick(state)();
+        tick(state)();
       })
   }
 
