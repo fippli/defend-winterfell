@@ -2,4 +2,5 @@ version: '3'
 services:
   njin:
     build: ./njin
+    working_dir: /usr/src/app
     command: "lein run"
