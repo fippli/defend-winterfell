@@ -352,7 +352,7 @@
 (defn maybe-spawn-enemies
   "Spawns enemies if applicable"
   [state]
-  (if (= (mod (:tick state) 20) 0)
+  (if (= (mod (:tick state) 1000) 0)
   (spawn-enemies state)
   state))
 
