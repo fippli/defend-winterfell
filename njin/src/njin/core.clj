@@ -21,9 +21,9 @@
                          :y 0}
               :direction {:x 10
                           :y 0}}]
-   :defenders [:position {:x 500
+   :defenders [{:position {:x 500
                           :y 100
-                          :range 50}]
+                          :range 50}}]
    :lives 3
    :wave 0
    :gold 100})
@@ -40,23 +40,23 @@
 
 (defn increase-gold
   "Increases the amount of gold"
-  [state amount]
   {:test (fn []
            (is (= (->
                    (create-empty-state)
                    (increase-gold 50)
                    (get :gold))
                   150)))}
+  [state amount]
   (update state :gold
           (fn [gold]
             (+ gold amount))))
 
 (defn get-bounty
   "Returns the bounty of the provided enemy"
-  [enemy]
   {:test (fn []
            (is (= (get-bounty {:bounty 56})
                   56)))}
+  [enemy]
   (get enemy :bounty))
 
 (defn enemy-die
@@ -85,6 +85,16 @@
 
 (defn add-defender
   "Adds a defender"
+  {:test (fn [] (is (= (-> (create-empty-state)
+                           (add-defender {:position {:x 500
+                                                  :y 100
+                                                  :range 50}})
+                           (get :defenders)
+                           (count))
+                       2))))}
+  [state defendet]
+  (update state :defenders (fn [defenders]
+                            (conj defenders defender)))
   )
 
 (defn start-game
