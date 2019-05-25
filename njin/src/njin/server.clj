@@ -5,7 +5,7 @@
 
 (def headers {"Access-Control-Allow-Origin"  "*"
               "Access-Control-Allow-Methods" "GET,POST"
-              "Access-Control-Allow-Headers" "X-Requested-With,Content-Type,Cache-Control,Origin,Accept"
+              "Access-Control-Allow-Headers" "X-Requested-With,Content-Type,Cache-Control,Origin,Accept,Options"
               "Content-Type"                 "application/json; charset=utf-8"})
               
 (defn game-response
@@ -28,7 +28,10 @@
          (game-response)))
 
     "/action"
-    (time (let [body (clojure.data.json/read-str (slurp (:body request)))
+    (time 
+    (if (nil? (:body request))
+      (game-response {})
+    (let [body (clojure.data.json/read-str (slurp (:body request)))
                 action-id (get body "actionId")
                 type (get body "type")
                 position (get body "position")]
@@ -36,7 +39,7 @@
               "defender" (-> (add-defender! type position)
                              (game-response))
               (-> (tick!)
-                  (game-response)))))
+                  (game-response))))))
 
     {:status  404
      :headers {"Access-Control-Allow-Origin" "*"}}))
