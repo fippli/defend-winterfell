@@ -32,13 +32,13 @@
       // },
       nightKing: {
         src: 'art/whiteWalker.png',
-        width: 44,
-        height: 80,
+        width: 60,
+        height: 60,
       },
       aryaStark: {
         src: 'art/arya.png',
-        width: 44,
-        height: 80,
+        width: 31.5,
+        height: 90,
       },
     },
     enemies: [{ type: 'nightKing', position: {} }]
