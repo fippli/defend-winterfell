@@ -22,6 +22,7 @@ const actionHandler = (() => {
 
   const handleActions = (state) => new Promise((resolve, reject) => {
     if (actionQueue.length > 0) {
+      console.log('Trying action');
       const actionName = actionQueue.splice(0, 1)[0];
       const requestBody = getActionBody(actionName)
       postAction(requestBody)

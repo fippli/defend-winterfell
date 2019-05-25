@@ -5,8 +5,8 @@ const postAction = (() => {
     body: JSON.stringify(body),
     headers: {
       'content-type': 'application/json',
-      'mode': 'cors',
     },
+    mode: 'cors',
   })
     .then(response => response.json())
     .catch(error => { console.error(error) });

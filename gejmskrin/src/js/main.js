@@ -61,7 +61,7 @@
     actionHandler.handleActions(state)
       .then(drawCanvas(canvasElement, context))
       .then(state => {
-        tick(state)();
+        // tick(state)();
       })
   }
 

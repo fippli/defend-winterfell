@@ -3,11 +3,15 @@
             [njin.game :refer [create-game! tick! add-defender!]]
             [clojure.data.json]))
 
+(def headers {"Access-Control-Allow-Origin"  "*"
+              "Access-Control-Allow-Methods" "GET,POST"
+              "Access-Control-Allow-Headers" "X-Requested-With,Content-Type,Cache-Control,Origin,Accept"
+              "Content-Type"                 "application/json; charset=utf-8"})
+              
 (defn game-response
   [client-state]
   {:status  200
-   :headers {"Access-Control-Allow-Origin" "*"
-             "Content-Type"                "application/json; charset=utf-8"}
+   :headers headers
    :body    (clojure.data.json/write-str client-state)})
 
 (defn handle-request
