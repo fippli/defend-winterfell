@@ -14,10 +14,10 @@
                  :bounty 7
                  :health 60
                  :id 1
-                 :position {:x 0
+                 :position {:x 350
                             :y 0}
-                 :direction {:x 10
-                             :y 0}}))
+                 :direction {:x 0
+                             :y 1}}))
            (is (= (get-definition {:type "nightKing"})
                 (get-definition "nightKing"))))}
   [type-or-entity]

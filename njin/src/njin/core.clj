@@ -62,19 +62,34 @@
                (assoc :id id))]
     (update state :enemies #(conj % enemy))))
 
+(defn generate-defender-id
+  "Generates a new defender id"
+  [state]
+  (let [currentId (reduce (fn [acc curr]
+                            (max (:id curr) acc)
+                            ) 0 (:defenders state))]
+    (+ currentId 1)))
+
 (defn add-defender
   "Add a defender to the state"
   {:test (fn []
            (is (= (-> (create-empty-state)
-                      (add-defender "aryaStark" 1)
+                      (add-defender "aryaStark" {})
                       (get :defenders)
                       (first)
                       (get :type))
-                  "aryaStark")))}
-  [state type id]
-  (let [defender (->
-               (get-definition type)
-               (assoc :id id))]
+                  "aryaStark"))
+           (is (= (-> (create-empty-state)
+                      (add-defender "aryaStark" {:x 123 :y 321})
+                      (get :defenders)
+                      (first)
+                      (get :position))
+                  {:x 123 :y 321})))}
+  [state type position]
+  (let [id (generate-defender-id state)
+        defender (->
+                  (get-definition type)
+                  (assoc :id id :position position))]
     (update state :defenders #(conj % defender))))
 
 (defn update-pos
@@ -92,8 +107,8 @@
                            enemy)))))
 
 (defn update-object-position
-"Update the position of a movable object"
-[object]
+  "Update the position of a movable object"
+  [object]
   (let [dir (:direction object)]
     (update object :position #(update-pos % dir))))
 
@@ -153,7 +168,7 @@
   []
   (-> (create-empty-state)
       (add-enemy "nightKing" 1)
-      (add-defender "aryaStark" "def1")))
+      (add-defender "aryaStark" 1)))
 
 (defn tick
   "Do the ticky thing"
