@@ -25,3 +25,13 @@
   "Main function"
   []
   (println "Main function"))
+
+(defn add-enemy
+  "Add an enemy to the state"
+  [state]
+  (let [enemy {:bounty 7
+               :health 60
+               :id 2
+               :position {:x 10 :y 0}
+               :direction {:x 10 :y 0}}]
+    (update state :enemies #(conj % enemy))))
