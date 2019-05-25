@@ -1,6 +1,5 @@
 (ns njin.definitions (:require [clojure.test :refer [is]]))
 (defonce definitions-atom (atom {}))
-(println "Muu")
 (defn add-definitions! [definitions]
   (swap! definitions-atom merge definitions))
 

@@ -1,6 +1,6 @@
 (ns njin.server
   (:require [org.httpkit.server]
-            [njin.game :refer [create-game!]]
+            [njin.game :refer [create-game! tick!]]
             [clojure.data.json]))
 
 (defn game-response
@@ -17,6 +17,11 @@
 
     "/createGame"
     (time (game-response (create-game!)))
+
+    "/tick"
+    (time
+     (-> (tick!)
+         (game-response)))
 
     {:status  404
      :headers {"Access-Control-Allow-Origin" "*"}}))

@@ -1,7 +1,8 @@
 (ns njin.core
   (:require [clojure.test :refer [function? is]]
             [njin.definitions :refer [get-definition
-                                      get-definitions]]))
+                                      get-definitions]]
+            [njin.definitions-loader]))
 
 (defn create-empty-state
   "Creates an empty state"
@@ -138,6 +139,12 @@
   []
   (-> (create-empty-state)
       (add-enemy "nightKing" 1)))
+
+(defn tick
+  "Do the ticky thing"
+  {}
+  [state]
+  state)
 
 (defn main
   "Main function"
