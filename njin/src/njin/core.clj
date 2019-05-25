@@ -73,6 +73,11 @@
                (filter (fn [enemy] (not= (:id enemy) enemy-id)) enemies)))
      (increase-gold (get-bounty killed-enemy)))))
 
+(defn start-game
+  "Returns start state of the game"
+  []
+  (create-empty-state))
+
 (defn main
   "Main function"
   []
