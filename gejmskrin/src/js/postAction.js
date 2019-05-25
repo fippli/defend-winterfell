@@ -1,5 +1,4 @@
 const postAction = (() => {
-
   return (body) => fetch('http://localhost:8001/action', {
     method: 'post',
     body: JSON.stringify(body),
