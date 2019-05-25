@@ -108,3 +108,25 @@
                :position {:x 10 :y 0}
                :direction {:x 10 :y 0}}]
     (update state :enemies #(conj % enemy))))
+
+(defn update-pos
+  "Update the position object according to a vector"
+  [{x :x y :y} {dx :x dy :y}]
+  {:x (+ x dx) :y (+ y dy)})
+
+(defn modify-enemy
+  "Modify an enemy with the given id using the provided function"
+  [state f enemy-id]
+  (update state :enemies
+    (partial map (fn [enemy]
+                    (if (= enemy-id (:id enemy))
+                    (f enemy)
+                    enemy)))))
+
+(defn update-enemy-position
+  "Update the position of an enemy"
+  ([state enemy-id]
+    (modify-enemy state update-enemy-position enemy-id))
+  ([enemy]
+    (let [dir (:direction enemy)]
+      (update enemy :position #(update-pos % dir)))))
