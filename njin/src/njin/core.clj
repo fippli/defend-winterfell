@@ -1,10 +1,7 @@
 (ns njin.core
   (:require [clojure.test :refer [function? is]]
             [njin.definitions :refer [get-definition
-                                      get-definitions]]
-            [njin.definitions-loader]))
-
-(println (get-definitions))
+                                      get-definitions]]))
 
 (defn create-empty-state
   "Creates an empty state"
@@ -133,7 +130,8 @@
                        1)))}
   [state defender]
   (update state :defenders (fn [defenders]
-                            (conj defenders defender))))
+                            (conj defenders defender)))
+)
 
 (defn start-game
   "Returns start state of the game"
