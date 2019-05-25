@@ -83,6 +83,17 @@
                (filter (fn [enemy] (not= (:id enemy) enemy-id)) enemies)))
      (increase-gold (get-bounty killed-enemy)))))
 
+(defn create-defender
+  "creates a defender given a position and range"
+  {:test (fn [] (is (= (create-defender {:x 100 :y 200 :range 25})
+                        {:position {:x 100
+                                    :y 200
+                                    :range 25}})))}
+  [{x :x y :y range :range}]
+    {:position {:x x
+                :y y
+                :range range}})
+
 (defn add-defender
   "Adds a defender"
   {:test (fn [] (is (= (-> (create-empty-state)
@@ -91,11 +102,11 @@
                                                   :range 50}})
                            (get :defenders)
                            (count))
-                       2))))}
-  [state defendet]
+                       2)))}
+  [state defender]
   (update state :defenders (fn [defenders]
                             (conj defenders defender)))
-  )
+)
 
 (defn start-game
   "Returns start state of the game"
