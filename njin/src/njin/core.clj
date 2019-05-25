@@ -1,12 +1,13 @@
 (ns njin.core
-  (:require [clojure.test :refer [function? is]]))
+  (:require [ysera.test :refer [is is-not is= error?]]
+            [clojure.test :refer [function?]]))
 
 (defn create-empty-state
   "Creates an empty state"
-  []
   {:test (fn []
            (is (= (keys (create-empty-state))
                   [:enemies :defenders :lives :wave :gold])))}
+[]
   {:enemies [{:bounty 7
               :health 60
               :id 1
@@ -37,30 +38,32 @@
   "adds 1 to wave"
   [state]
   (update state :wave (fn [wave] (+ wave 1))))
+
 (defn increase-gold
   "Increases the amount of gold"
-  [state amount]
   {:test (fn []
            (is (= (->
                    (create-empty-state)
                    (increase-gold 50)
                    (get :gold))
                   150)))}
+  [state amount]
   (update state :gold
           (fn [gold]
             (+ gold amount))))
 
 (defn get-bounty
   "Returns the bounty of the provided enemy"
-  [enemy]
+
   {:test (fn []
            (is (= (get-bounty {:bounty 56})
                   56)))}
+  [enemy]
   (get enemy :bounty))
 
 (defn enemy-die
   "Actions when an enemy dies"
-  [state enemy-id]
+
   {:test (fn []
            ; Check that enemy is removed
            (is (= (-> (create-empty-state)
@@ -73,9 +76,10 @@
                     (enemy-die $ 1)
                     (get $ :gold))
                   107)))}
-  (let [killed-enemy (->>(get state :enemies)
-                       (filter (fn [enemy] (= (:id enemy) enemy-id)))
-                       (first))]
+  [state enemy-id]
+  (let [killed-enemy (->> (get state :enemies)
+                          (filter (fn [enemy] (= (:id enemy) enemy-id)))
+                          (first))]
     (->
      (update state :enemies
              (fn [enemies]
