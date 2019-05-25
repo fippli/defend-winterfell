@@ -7,9 +7,9 @@
                 :bounty 7
                 :health 60
                 :id 1
-                :position {:x 0
+                :position {:x 250
                            :y 0}
-                :direction {:x 10
-                            :y 0}}})
+                :direction {:x 0
+                            :y 1}}})
 
 (definitions/add-definitions! enemy-definitions)
