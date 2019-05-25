@@ -64,9 +64,9 @@
                     (enemy-die $ 1)
                     (get $ :gold))
                   107)))}
-  (let [killed-enemy (as-> (get state :enemies) $
-                       (filter (fn [enemy] (= (:id enemy) enemy-id)) $)
-                       (first $))]
+  (let [killed-enemy (->>(get state :enemies)
+                       (filter (fn [enemy] (= (:id enemy) enemy-id)))
+                       (first))]
     (->
      (update state :enemies
              (fn [enemies]
