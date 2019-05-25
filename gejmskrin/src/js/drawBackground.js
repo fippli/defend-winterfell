@@ -3,9 +3,9 @@ const drawBackground = (function () {
   return context => (state) => {
     return new Promise((resolve, reject) => {
       try {
-        drawImageObject(state, context, 'grass');
-        drawImageObject(state, context, 'road');
-        drawImageObject(state, context, 'castle');
+        drawImageObject(state, context, 'grass', state.images.grass.position);
+        drawImageObject(state, context, 'road', state.images.road.position);
+        drawImageObject(state, context, 'castle', state.images.castle.position);
         resolve(state);
       } catch (error) {
         reject(error);
