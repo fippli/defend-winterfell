@@ -3,5 +3,5 @@ FROM clojure
 WORKDIR /usr/src/app
 
 COPY . .
-
-RUN lein run
+EXPOSE 8001
+CMD lein run

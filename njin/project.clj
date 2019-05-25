@@ -8,6 +8,7 @@
                  [http-kit "2.2.0"]
                  [org.clojure/data.json "0.2.6"]
                  [proto-repl "0.3.1"]]
+                 [http-kit "2.3.0"]
+                 [org.clojure/data.json "0.2.6"]]
   :repl-options {:init-ns njin.core}
-  :main "njin.core/main"
-  )
+  :main "njin.server/start!")
