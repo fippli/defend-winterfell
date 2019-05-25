@@ -58,20 +58,16 @@
     clearCanvas(state, canvasElement, context)
       .then(drawBackground(context))
       .then(drawImageArray(context, state.enemies)) // Draw enemies
-      .then(drawImageArray(context, state.defenders)) // Draw defenders
-  }
+    // .then(drawImageArray(context, state.defenders)) // Draw defenders
+  };
 
   const startGame = (state) => {
     createGame()
       .then(mergeState(state))
       .then(drawCanvas)
-  }
+  };
 
   loadImages(state) // This should be done once in the future
     .then(startGame);
-  /*.then(state => drawBackground(state, context))
-  .then(state => drawEnemies(state, conext))
-  .then(state => drawImageArray(state, context, state.defenders))
-  .catch(error => { console.error(error); });*/
 
 })();
