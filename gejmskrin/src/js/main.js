@@ -39,16 +39,35 @@
         src: 'art/night-king.svg',
         width: 44,
         height: 80,
-      }
+      },
     },
+    enemies: [{ type: 'nightKing', position: {} }]
   };
 
   const canvasElement = document.getElementById('gejmskrin');
   const context = canvasElement.getContext('2d');
 
+  const mergeState = state => (APIState) => {
+    return {
+      ...state,
+      ...APIState,
+    };
+  };
+
+  const drawCanvas = (state) => {
+    clearCanvas(state, canvasElement, context)
+      .then(drawBackground(context))
+      .then(drawImageArray(context, state.enemies)) // Draw enemies
+    // .then(drawImageArray(context, state.defenders)) // Draw defenders
+  };
+
+  const startGame = (state) => {
+    createGame()
+      .then(mergeState(state))
+      .then(drawCanvas)
+  };
+
   loadImages(state) // This should be done once in the future
-    .then(state => drawBackground(state, context))
-    .then(state => drawEnemies(state, conext))
-    .catch(error => { console.error(error); });
+    .then(startGame);
 
 })();
