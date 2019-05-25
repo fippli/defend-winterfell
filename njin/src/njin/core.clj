@@ -2,24 +2,31 @@
   (:require [clojure.test :refer [function? is]]
             [njin.definitions :refer [get-definition
                                       get-definitions]]
-            [njin.definitions-loader]))
+            [njin.definitions-loader]
+            [clojure.math.numeric-tower :refer [expt sqrt]]))
 
 (defn create-empty-state
   "Creates an empty state"
   {:test (fn []
            (is (= (keys (create-empty-state))
-                  [:enemies :defenders :lives :wave :gold])))}
+                  [:enemies :defenders :lives :wave :gold :tick])))}
   []
   {:enemies []
    :defenders []
    :lives 3
    :wave 0
-   :gold 100})
+   :gold 100
+   :tick 1})
 
 (defn lose-a-life
   "removes a life"
   [state]
   (update state :lives (fn [lives] (- lives 1))))
+
+(defn increase-tick
+  "Increases tick by one"
+  [state]
+  (update state :tick (fn [tick] (+ tick 1))))
 
 (defn next-wave
   "adds 1 to wave"
@@ -47,6 +54,70 @@
   [enemy]
   (get enemy :bounty))
 
+(defn get-defender
+  "Gets the defender with provided id"
+  {:test (fn []
+           (is (= (-> {:defenders [{:type "aryaStark"
+                                    :position {:x 200
+                                               :y 200}
+                                    :range 1000
+                                    :frequency 1
+                                    :id 1}]}
+                      (get-defender 1)
+                      (:id))
+                      1)))}
+  [state defender-id]
+  (-> (filter (fn [defender]
+                (= (:id defender) defender-id))
+                (:defenders state))
+      (first)))
+
+(defn get-enemy
+  "Gets the enemy with provided id"
+  {:test (fn []
+           (is (= (-> {:enemies [{:type "nightKing"
+                                    :id 1}]}
+                      (get-enemy 1)
+                      (:id))
+                      1)))}
+  [state enemy-id]
+  (-> (filter (fn [enemy]
+                (= (:id enemy) enemy-id))
+                (:enemies state))
+      (first)))
+
+(defn get-closest-enemy-in-range
+  "Returns the closest enemy in range"
+  {:test (fn []
+           (is (= (-> {:enemies [{:id 1
+                                  :position {:x 50
+                                             :y 50}}
+                                             {:id 2
+                                                                    :position {:x 200
+                                                                               :y 200}}]
+                       :defenders [{:type "aryaStark"
+                                    :position {:x 200
+                                               :y 200}
+                                    :range 1000
+                                    :frequency 1
+                                    :id 1}]}
+                      (get-closest-enemy-in-range 1)
+                      (:id))
+                  2)))}
+  [state defender-id]
+  (let [defender (get-defender state defender-id)
+        defenderPosition (:position defender)]
+
+  (->> (map (fn [enemy]
+    (let [enemyPosition (:position enemy)
+    distance (sqrt ( +(expt (- (:x enemyPosition) (:x defenderPosition)) 2)
+      (expt (- (:y enemyPosition) (:y defenderPosition)) 2)))]
+      (assoc enemy :distance distance))) (:enemies state))
+      (sort (fn [e1 e2]
+        (< (:distance e1) (:distance e2))))
+        (first)
+      )))
+
 (defn add-enemy
   "Add an enemy to the state"
   {:test (fn []
@@ -66,8 +137,7 @@
   "Generates a new defender id"
   [state]
   (let [currentId (reduce (fn [acc curr]
-                            (max (:id curr) acc)
-                            ) 0 (:defenders state))]
+                            (max (:id curr) acc)) 0 (:defenders state))]
     (+ currentId 1)))
 
 (defn add-defender
@@ -141,9 +211,9 @@
                     (get $ :gold))
                   107)))}
   [state enemy-id]
-  (let [killed-enemy (->>(get state :enemies)
-                       (filter (fn [enemy] (= (:id enemy) enemy-id)))
-                       (first))]
+  (let [killed-enemy (->> (get state :enemies)
+                          (filter (fn [enemy] (= (:id enemy) enemy-id)))
+                          (first))]
     (->
      (update state :enemies
              (fn [enemies]
@@ -153,29 +223,95 @@
 (defn create-defender
   "creates a defender given a position and range"
   {:test (fn [] (is (= (create-defender {:x 100 :y 200 :range 25})
-                        {:position {:x 100
-                                    :y 200
-                                    :range 25}})))}
+                       {:position {:x 100
+                                   :y 200
+                                   :range 25}})))}
   [{x :x y :y range :range}]
-    {:position {:x x
-                :y y
-                :range range}})
+  {:position {:x x
+              :y y
+              :range range}})
 
 
+(defn hurt-enemy
+  "Deals damage to the enemy and kills it if too damaged"
+  {:test (fn[]
+    (is (= (hurt-enemy {:enemies [{
+                                      :health 10
+                                      :id 1
+                                      :bounty 1337
+                                      }]
+                           :gold 0} 1 10)
+           {:gold 1337
+            :enemies []}
+           ))
+           (is (= (hurt-enemy {:enemies [{
+                                             :health 60
+                                             :id 1
+                                             :bounty 1337
+                                             }]
+                                  :gold 0} 1 10)
+                  {:gold 0
+                   :enemies [{
+                                                     :health 50
+                                                     :id 1
+                                                     :bounty 1337
+                                                     }]}
+                  )))}
+  [state enemy-id damage]
+    (let [enemy (get-enemy state enemy-id)]
+  (if (<= (:health enemy) damage)
+      (enemy-die state enemy-id)
+      (modify-enemy state (fn [enemy]
+    (update enemy :health (fn [health]
+      (- health damage)))) enemy-id))))
+
+(defn shoot
+  "Shoot nearest enemy"
+  {:test (fn []
+    (is (= (as-> (create-empty-state) $
+    (add-enemy $ "nightKing" 1)
+    (add-defender $ "aryaStark" {:x 123 :y 321})
+    (shoot $ (get-defender $ 1))
+    (get-enemy $ 1)
+    (:health $))
+    50)))}
+  [state defender]
+  (let [enemy (get-closest-enemy-in-range state (:id defender))]
+    (hurt-enemy state (:id enemy) (:damage defender))))
+
+(defn defend
+  "All defenders do their actions if they should"
+  {:test (fn []
+    (is (= (-> (create-empty-state)
+    (add-enemy "nightKing" 1)
+    (add-defender "aryaStark" {:x 123 :y 321})
+    (defend)
+    (:enemies)
+    (first)
+    (:health))
+    50)))}
+    [state]
+    (reduce (fn [internalState defender]
+      (if (= (mod (:tick internalState) (:frequency defender)) 0)
+        (shoot internalState defender)
+        internalState))
+      state (:defenders state)))
 
 (defn start-game
   "Returns start state of the game"
   []
   (-> (create-empty-state)
       (add-enemy "nightKing" 1)
-      (add-defender "aryaStark" 1)))
+      (add-defender "aryaStark" {:x 123 :y 321})))
 
 (defn tick
   "Do the ticky thing"
   {}
   [state]
   (-> state
-      (update-all-positions)))
+      (update-all-positions)
+      (increase-tick)
+      (defend)))
 
 (defn main
   "Main function"
