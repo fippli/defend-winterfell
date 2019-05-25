@@ -13,6 +13,13 @@
               :position {:x 0
                          :y 0}
               :direction {:x 10
+                          :y 0}}
+             {:bounty 7
+              :health 60
+              :id 2
+              :position {:x 0
+                         :y 0}
+              :direction {:x 10
                           :y 0}}]
    :defenders [:position {:x 500
                           :y 100
@@ -20,6 +27,51 @@
    :lives 3
    :wave 0
    :gold 100})
+
+(defn increase-gold
+  "Increases the amount of gold"
+  [state amount]
+  {:test (fn []
+           (is (= (->
+                   (create-empty-state)
+                   (increase-gold 50)
+                   (get :gold))
+                  150)))}
+  (update state :gold
+          (fn [gold]
+            (+ gold amount))))
+
+(defn get-bounty
+  "Returns the bounty of the provided enemy"
+  [enemy]
+  {:test (fn []
+           (is (= (get-bounty {:bounty 56})
+                  56)))}
+  (get enemy :bounty))
+
+(defn enemy-die
+  "Actions when an enemy dies"
+  [state enemy-id]
+  {:test (fn []
+           ; Check that enemy is removed
+           (is (= (-> (create-empty-state)
+                      (enemy-die 1)
+                      (get :enemies)
+                      (count))
+                  1))
+           ; Check that gold is increased
+           (is (= (as-> (create-empty-state) $
+                    (enemy-die $ 1)
+                    (get $ :gold))
+                  107)))}
+  (let [killed-enemy (->>(get state :enemies)
+                       (filter (fn [enemy] (= (:id enemy) enemy-id)))
+                       (first))]
+    (->
+     (update state :enemies
+             (fn [enemies]
+               (filter (fn [enemy] (not= (:id enemy) enemy-id)) enemies)))
+     (increase-gold (get-bounty killed-enemy)))))
 
 (defn main
   "Main function"
