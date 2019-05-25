@@ -37,6 +37,7 @@
   "adds 1 to wave"
   [state]
   (update state :wave (fn [wave] (+ wave 1))))
+
 (defn increase-gold
   "Increases the amount of gold"
   [state amount]
@@ -60,7 +61,6 @@
 
 (defn enemy-die
   "Actions when an enemy dies"
-  [state enemy-id]
   {:test (fn []
            ; Check that enemy is removed
            (is (= (-> (create-empty-state)
@@ -73,6 +73,7 @@
                     (enemy-die $ 1)
                     (get $ :gold))
                   107)))}
+  [state enemy-id]
   (let [killed-enemy (->>(get state :enemies)
                        (filter (fn [enemy] (= (:id enemy) enemy-id)))
                        (first))]
@@ -81,6 +82,10 @@
              (fn [enemies]
                (filter (fn [enemy] (not= (:id enemy) enemy-id)) enemies)))
      (increase-gold (get-bounty killed-enemy)))))
+
+(defn add-defender
+  "Adds a defender"
+  )
 
 (defn start-game
   "Returns start state of the game"
