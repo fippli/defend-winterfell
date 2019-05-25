@@ -8,8 +8,8 @@
                 :health 60
                 :id 1
                 :position {:x 350
-                           :y 0}
+                           :y 640}
                 :direction {:x 0
-                            :y 1}}})
+                            :y -2}}})
 
 (definitions/add-definitions! enemy-definitions)
