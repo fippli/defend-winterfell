@@ -37,11 +37,9 @@
                    (increase-gold 50)
                    (get :gold))
                   150)))}
-  (do
-    (println amount)
-    (update state :gold
-            (fn [gold]
-              (+ gold amount)))))
+  (update state :gold
+          (fn [gold]
+            (+ gold amount))))
 
 (defn get-bounty
   "Returns the bounty of the provided enemy"
