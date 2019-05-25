@@ -36,7 +36,7 @@
         height: 80,
       },
       aryaStark: {
-        src: 'art/night-king.svg',
+        src: 'art/arya-stark.svg',
         width: 44,
         height: 80,
       },
@@ -47,24 +47,28 @@
   const canvasElement = document.getElementById('gejmskrin');
   const context = canvasElement.getContext('2d');
 
-  const mergeState = state => (APIState) => {
-    return {
-      ...state,
-      ...APIState,
-    };
+  const tick = previousState => () => {
+    fetchEndpoint('tick')
+      .then(mergeState(previousState))
+      .then(state => {
+        window.requestAnimationFrame(gameloop(state));
+      })
   };
 
-  const drawCanvas = (state) => {
-    clearCanvas(state, canvasElement, context)
-      .then(drawBackground(context))
-      .then(drawImageArray(context, state.enemies)) // Draw enemies
-    // .then(drawImageArray(context, state.defenders)) // Draw defenders
-  };
+  const gameloop = state => () => {
+    // handle actions
+    drawCanvas(state, canvasElement, context)
+      .then(state => {
+        tick(state)();
+      })
+  }
 
   const startGame = (state) => {
-    createGame()
+    fetchEndpoint('createGame')
       .then(mergeState(state))
-      .then(drawCanvas)
+      .then(state => {
+        gameloop(state)()
+      })
   };
 
   loadImages(state) // This should be done once in the future

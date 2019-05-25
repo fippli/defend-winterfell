@@ -5,12 +5,12 @@ const drawImageObject = (function () {
 
   'use strict';
 
-  return function (state, context, imageKey) {
+  return function (state, context, imageKey, position) {
     const imageObject = state.images[imageKey];
     context.drawImage(
       state.loadedImages[imageKey],
-      imageObject.position.x,
-      imageObject.position.y,
+      position.x,
+      position.y,
       imageObject.width,
       imageObject.height,
     );

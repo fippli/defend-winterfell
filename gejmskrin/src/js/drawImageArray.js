@@ -4,7 +4,7 @@ const drawImageArray = (function () {
     return new Promise(function (resolve, reject) {
       try {
         imageArray.forEach(imageObject => {
-          drawImageObject(state, context, imageObject.type);
+          drawImageObject(state, context, imageObject.type, imageObject.position);
         });
         resolve(state);
       } catch (error) {
