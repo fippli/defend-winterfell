@@ -1,31 +1,16 @@
 (ns njin.core
-  (:require [clojure.test :refer [function? is]]))
+  (:require [clojure.test :refer [function? is]]
+            [njin.definitions :refer [get-definition
+                                      get-definitions]]))
 
 (defn create-empty-state
   "Creates an empty state"
-  []
   {:test (fn []
            (is (= (keys (create-empty-state))
                   [:enemies :defenders :lives :wave :gold])))}
-  {:enemies [{:bounty 7
-              :health 60
-              :id 1
-              :type "nightKing"
-              :position {:x 0
-                         :y 0}
-              :direction {:x 10
-                          :y 0}}
-             {:bounty 7
-              :health 60
-              :id 2
-              :type "nightKing"
-              :position {:x 0
-                         :y 0}
-              :direction {:x 10
-                          :y 0}}]
-   :defenders [{:position {:x 500
-                          :y 100
-                          :range 50}}]
+  []
+  {:enemies []
+   :defenders []
    :lives 3
    :wave 0
    :gold 100})
@@ -61,17 +46,57 @@
   [enemy]
   (get enemy :bounty))
 
+(defn add-enemy
+  "Add an enemy to the state"
+  {:test (fn []
+           (is (= (-> (create-empty-state)
+                      (add-enemy "nightKing" 1)
+                      (get :enemies)
+                      (first)
+                      (get :type))
+                  "nightKing")))}
+  [state type id]
+  (let [enemy (->
+               (get-definition type)
+               (assoc :id id))]
+    (update state :enemies #(conj % enemy))))
+
+(defn update-pos
+  "Update the position object according to a vector"
+  [{x :x y :y} {dx :x dy :y}]
+  {:x (+ x dx) :y (+ y dy)})
+
+(defn modify-enemy
+  "Modify an enemy with the given id using the provided function"
+  [state f enemy-id]
+  (update state :enemies
+          (partial map (fn [enemy]
+                         (if (= enemy-id (:id enemy))
+                           (f enemy)
+                           enemy)))))
+
+(defn update-enemy-position
+  "Update the position of an enemy"
+  ([state enemy-id]
+   (modify-enemy state update-enemy-position enemy-id))
+  ([enemy]
+   (let [dir (:direction enemy)]
+     (update enemy :position #(update-pos % dir)))))
+
 (defn enemy-die
   "Actions when an enemy dies"
   {:test (fn []
            ; Check that enemy is removed
            (is (= (-> (create-empty-state)
+                      (add-enemy "nightKing" 1)
+                      (add-enemy "nightKing" 2)
                       (enemy-die 1)
                       (get :enemies)
                       (count))
                   1))
            ; Check that gold is increased
            (is (= (as-> (create-empty-state) $
+                    (add-enemy $ "nightKing" 1)
                     (enemy-die $ 1)
                     (get $ :gold))
                   107)))}
@@ -113,20 +138,10 @@
 (defn start-game
   "Returns start state of the game"
   []
-  (create-empty-state))
+  (-> (create-empty-state)
+      (add-enemy "nightKing" 1)))
 
 (defn main
   "Main function"
   []
   (println "Main function"))
-
-(defn add-enemy
-  "Add an enemy to the state"
-  [state]
-  (let [enemy {:bounty 7
-               :health 60
-               :id 2
-               :type "nightKing"
-               :position {:x 10 :y 0}
-               :direction {:x 10 :y 0}}]
-    (update state :enemies #(conj % enemy))))
