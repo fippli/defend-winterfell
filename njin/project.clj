@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [ysera "1.1.0"]
                  [http-kit "2.2.0"]
-                 [org.clojure/data.json "0.2.6"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [proto-repl "0.3.1"]]
   :repl-options {:init-ns njin.core}
   :main "njin.core/main"
   )

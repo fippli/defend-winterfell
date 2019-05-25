@@ -1,12 +1,13 @@
 (ns njin.core
-  (:require [clojure.test :refer [function? is]]))
+  (:require [ysera.test :refer [is is-not is= error?]]
+            [clojure.test :refer [function?]]))
 
 (defn create-empty-state
   "Creates an empty state"
-  []
   {:test (fn []
            (is (= (keys (create-empty-state))
                   [:enemies :defenders :lives :wave :gold])))}
+[]
   {:enemies [{:bounty 7
               :health 60
               :id 1
