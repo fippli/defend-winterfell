@@ -11,6 +11,7 @@
   {:enemies [{:bounty 7
               :health 60
               :id 1
+              :type "nightKing"
               :position {:x 0
                          :y 0}
               :direction {:x 10
@@ -18,6 +19,7 @@
              {:bounty 7
               :health 60
               :id 2
+              :type "nightKing"
               :position {:x 0
                          :y 0}
               :direction {:x 10
@@ -102,6 +104,7 @@
   (let [enemy {:bounty 7
                :health 60
                :id 2
+               :type "nightKing"
                :position {:x 10 :y 0}
                :direction {:x 10 :y 0}}]
     (update state :enemies #(conj % enemy))))
