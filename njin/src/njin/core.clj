@@ -16,6 +16,24 @@
    :wave 0
    :gold 100})
 
+(defn get-seed
+  "Returns the seed"
+  {:test (fn []
+           ; Can we retrieve seed?
+           (is (= (get-seed {:seed 7}) 7))
+           ; What if it is not set?
+           (is (= (get-seed {}) 0)))}
+  [state]
+  (if-not (nil? (:seed state)) (:seed state) 0))
+
+(defn update-seed
+  "Updates the seed in the state"
+  {:test (fn []
+           ; Can we set seed?
+           (is (= (update-seed {:seed 23 :thingy 62} 73) {:seed 73 :thingy 62})))}
+  [state new-seed]
+  (assoc state :seed new-seed))
+
 (defn lose-a-life
   "removes a life"
   [state]
