@@ -1,3 +1,6 @@
+
+const actionHandler = actionHandler();
+
 (function () {
   'use strict';
 
@@ -69,5 +72,4 @@
 
   loadImages(state) // This should be done once in the future
     .then(startGame);
-
 })();
