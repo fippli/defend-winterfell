@@ -28,6 +28,15 @@
    :wave 0
    :gold 100})
 
+(defn lose-a-life
+  "removes a life"
+  [state]
+  (update state :lives (fn [lives] (- lives 1))))
+
+(defn next-wave
+  "adds 1 to wave"
+  [state]
+  (update state :wave (fn [wave] (+ wave 1))))
 (defn increase-gold
   "Increases the amount of gold"
   [state amount]
