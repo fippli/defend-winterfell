@@ -76,13 +76,22 @@
                            (f enemy)
                            enemy)))))
 
+(defn update-object-position
+"Update the position of a movable object"
+[object]
+  (let [dir (:direction object)]
+    (update object :position #(update-pos % dir))))
+
 (defn update-enemy-position
   "Update the position of an enemy"
-  ([state enemy-id]
-   (modify-enemy state update-enemy-position enemy-id))
-  ([enemy]
-   (let [dir (:direction enemy)]
-     (update enemy :position #(update-pos % dir)))))
+  [state enemy-id]
+  (modify-enemy state update-object-position enemy-id))
+
+(defn update-all-positions
+  "Update the position of all movable object"
+  [state]
+  (-> state
+      (update :enemies (partial map update-object-position))))
 
 (defn enemy-die
   "Actions when an enemy dies"
@@ -144,7 +153,8 @@
   "Do the ticky thing"
   {}
   [state]
-  state)
+  (-> state
+      (update-all-positions)))
 
 (defn main
   "Main function"
