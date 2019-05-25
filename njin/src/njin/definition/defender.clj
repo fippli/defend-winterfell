@@ -7,7 +7,7 @@
                 :position {:x 200
                            :y 200}
                 :range 250
-                :frequency 10
+                :frequency 50
                 :damage 5}})
 
 (definitions/add-definitions! defender-definitions)

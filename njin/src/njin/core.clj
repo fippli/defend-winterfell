@@ -346,7 +346,7 @@
   [state]
   (reduce
     (fn [state iteration]
-      (let [yPosition (+ 640 (* iteration 10))]
+      (let [yPosition (+ 640 (* iteration 100))]
       (add-enemy state "nightKing" {:x 440 :y yPosition})))
     state
     (range (:wave state))))
@@ -354,7 +354,7 @@
 (defn maybe-spawn-enemies
   "Spawns enemies if applicable"
   [state]
-  (if (= (mod (:tick state) 1000) 0)
+  (if (= (mod (:tick state) 100) 0)
   (-> (spawn-enemies state)
   (next-wave))
   state))

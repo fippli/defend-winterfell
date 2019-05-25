@@ -17,7 +17,6 @@ const actionHandler = (() => {
 
   const handleActions = (state) => new Promise((resolve, reject) => {
     if (actionQueue.length > 0) {
-      console.log('Trying action');
       // const actionName = actionQueue.splice(0, 1)[0];
       postAction(tower)
         .then(mergeState(state))
@@ -30,7 +29,6 @@ const actionHandler = (() => {
   });
 
   const action = (event) => {
-    console.log(event);
     tower.x = event.screenX;
     tower.y = event.screenY;
     addAction(name);
