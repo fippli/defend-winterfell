@@ -1,12 +1,13 @@
-const postAction = (() => {
-  return (body) => fetch('http://localhost:8001/action', {
-    method: 'post',
+const postAction = (body) => {
+  return fetch('http://localhost:8001/action', {
+    method: 'POST',
     body: JSON.stringify(body),
     headers: {
-      'content-type': 'application/json',
+      accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     mode: 'cors',
   })
     .then(response => response.json())
-    .catch(error => { console.error(error) });
-})();
+    .catch(error => { console.error(error) })
+};
