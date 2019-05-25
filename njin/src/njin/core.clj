@@ -1,7 +1,8 @@
 (ns njin.core
   (:require [clojure.test :refer [function? is]]
             [njin.definitions :refer [get-definition
-                                      get-definitions]]))
+                                      get-definitions]]
+            [njin.definitions-loader]))
 
 (defn create-empty-state
   "Creates an empty state"
