@@ -123,6 +123,32 @@
   (-> state
       (update :enemies (partial map update-object-position))))
 
+(defn remove-enemies
+  "Remove all enemies that matches a predicate"
+  [state pred]
+  (update state :enemies
+    (partial filter (comp not pred))))
+
+(defn remove-enemy
+  "Remove an enemy with a given id from the board"
+  [state enemy-id]
+  (remove-enemies state #(= (:id %) enemy-id)))
+
+(defn enemy-has-reached-Winterfell
+  "Returns whether the given enemy has reached Winterfell or not"
+  [{pos :pos}]
+  (<= (:x pos) 120))
+
+(defn enemy-reached-winterfell-action
+  "For each enemy that has reached Winterfell: remove it from board and lose one life."
+  [state]
+  (reduce
+    (fn [state' enemy] (-> state'
+                            (remove-enemy (:id enemy))
+                            (lose-a-life)))
+    state
+    (filter enemy-has-reached-Winterfell (:enemies state))))
+
 (defn enemy-die
   "Actions when an enemy dies"
   {:test (fn []
@@ -144,11 +170,9 @@
   (let [killed-enemy (->>(get state :enemies)
                        (filter (fn [enemy] (= (:id enemy) enemy-id)))
                        (first))]
-    (->
-     (update state :enemies
-             (fn [enemies]
-               (filter (fn [enemy] (not= (:id enemy) enemy-id)) enemies)))
-     (increase-gold (get-bounty killed-enemy)))))
+    (-> state
+        (remove-enemy enemy-id)
+        (increase-gold (get-bounty killed-enemy)))))
 
 (defn create-defender
   "creates a defender given a position and range"
@@ -175,7 +199,8 @@
   {}
   [state]
   (-> state
-      (update-all-positions)))
+      (update-all-positions)
+      (enemy-reached-winterfell-action)))
 
 (defn main
   "Main function"
