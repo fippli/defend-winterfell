@@ -51,7 +51,7 @@
   "Add an enemy to the state"
   {:test (fn []
            (is (= (-> (create-empty-state)
-                      (add-enemy "nightKing" 1)
+                      (add-enemy "nightKing" 1))
                       (get :enemies)
                       (first)
                       (get :type))
@@ -119,9 +119,18 @@
 
 (defn update-all-positions
   "Update the position of all movable object"
+  {:test (fn [] (is (= (-> (create-empty-state)
+                           (add-enemy "nightKing" 1)
+                           (add-enemy "nightKing" 1)
+                           (update-all-positions)
+                           (:enemies)
+                           (first)
+                           (:position)
+                           (:y))
+                        1)))}
   [state]
   (-> state
-      (update :enemies (partial map update-object-position))))
+      (update :enemies (first (partial map update-object-position)))))
 
 (defn remove-enemies
   "Remove all enemies that matches a predicate"
@@ -136,11 +145,15 @@
 
 (defn enemy-has-reached-Winterfell
   "Returns whether the given enemy has reached Winterfell or not"
-  [{pos :pos}]
-  (<= (:x pos) 120))
+  [{pos :position}]
+  (<= (:y pos) 120))
 
 (defn enemy-reached-winterfell-action
   "For each enemy that has reached Winterfell: remove it from board and lose one life."
+  {:test (fn [] (is (= (-> (create-empty-state)
+                           (add-enemy "nightKing" 1)
+                           (enemy-has-reached-Winterfell)
+                           )))}
   [state]
   (reduce
     (fn [state' enemy] (-> state'
@@ -196,7 +209,13 @@
 
 (defn tick
   "Do the ticky thing"
-  {}
+
+  {:test (fn [] (is (= (-> (create-empty-state)
+                           (add-enemy "nightKing" 1)
+                           (add-enemy "nightKing" 1)
+                           (update-all-positions)
+                           (enemy-reached-winterfell-action))
+                           2)))}
   [state]
   (-> state
       (update-all-positions)
