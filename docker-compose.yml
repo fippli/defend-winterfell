@@ -1,8 +1,19 @@
 version: '3'
 services:
-  njin:
+  game_engine:
     build: ./njin
     working_dir: /usr/src/app
     command: "lein run"
     ports: 
       - "8001:8001"
+    volumes:
+      - ./njin:/usr/src/app
+
+  game_screen:
+    build: ./gejmskrin
+    working_dir: /usr/src/app
+    command: "python3 -m http.server 3000"
+    ports: 
+      - '3000:3000'
+    volumes:
+      - ./gejmskrin/src:/usr/src/app
