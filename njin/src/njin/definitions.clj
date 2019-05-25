@@ -16,7 +16,7 @@
                  :id 1
                  :position {:x 0
                             :y 0}
-                 :direction {:x 0
+                 :direction {:x 10
                              :y 0}}))
            (is (= (get-definition {:type "nightKing"})
                 (get-definition "nightKing"))))}
