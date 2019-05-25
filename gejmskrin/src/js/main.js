@@ -13,14 +13,14 @@
         height: 640,
       },
       nightKing: {
-        src: 'art/night-king.svg',
-        width: 44,
-        height: 80,
+        src: 'art/whiteWalker.png',
+        width: 60,
+        height: 60,
       },
       aryaStark: {
-        src: 'art/arya-stark.svg',
-        width: 44,
-        height: 80,
+        src: 'art/arya.png',
+        width: 31.5,
+        height: 90,
       },
     },
     enemies: [{ type: 'nightKing', position: {} }]
