@@ -1,13 +1,14 @@
 (ns njin.core
-  (:require [ysera.test :refer [is is-not is= error?]]
-            [clojure.test :refer [function?]]))
+  (:require [clojure.test :refer [function? is]
+             [njin.definitions :refer [get-definition
+                                       get-definitions]]]))
 
 (defn create-empty-state
   "Creates an empty state"
   {:test (fn []
            (is (= (keys (create-empty-state))
                   [:enemies :defenders :lives :wave :gold])))}
-[]
+  []
   {:enemies [{:bounty 7
               :health 60
               :id 1
@@ -100,11 +101,8 @@
 
 (defn add-enemy
   "Add an enemy to the state"
-  [state]
-  (let [enemy {:bounty 7
-               :health 60
-               :id 2
-               :type "nightKing"
-               :position {:x 10 :y 0}
-               :direction {:x 10 :y 0}}]
+  [state type id]
+  (let [enemy (->
+               (get-definition type)
+               (assoc :id id))]
     (update state :enemies #(conj % enemy))))
