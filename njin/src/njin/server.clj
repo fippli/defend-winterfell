@@ -34,9 +34,10 @@
     (let [body (clojure.data.json/read-str (slurp (:body request)))
                 action-id (get body "actionId")
                 type (get body "type")
-                position {:x (get body "x") :y (get body "x")}]
+                x (get body "x")
+                y (get body "y")]
             (case action-id
-              "defender" (-> (add-defender! type position)
+              "defender" (-> (add-defender! type {:x x :y y})
                              (game-response))
               (-> (tick!)
                   (game-response))))))
