@@ -127,12 +127,10 @@
 (defn add-defender
   "Adds a defender"
   {:test (fn [] (is (= (-> (create-empty-state)
-                           (add-defender {:position {:x 500
-                                                  :y 100
-                                                  :range 50}})
+                           (add-defender (create-defender {:x 100 :y 100 :range 50}))
                            (get :defenders)
                            (count))
-                       2)))}
+                       1)))}
   [state defender]
   (update state :defenders (fn [defenders]
                             (conj defenders defender))))
