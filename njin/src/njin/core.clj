@@ -14,7 +14,7 @@
   {:enemies []
    :defenders []
    :lives 3
-   :wave 0
+   :wave 1
    :gold 100
    :tick 1})
 
@@ -109,10 +109,12 @@
         defenderPosition (:position defender)]
 
     (->> (map (fn [enemy]
+                (do (println enemy)
+                (println defender)
                 (let [enemyPosition (:position enemy)
                       distance (sqrt (+ (expt (- (:x enemyPosition) (:x defenderPosition)) 2)
                                         (expt (- (:y enemyPosition) (:y defenderPosition)) 2)))]
-                  (assoc enemy :distance distance))) (:enemies state))
+                  (assoc enemy :distance distance)))) (:enemies state))
          (sort (fn [e1 e2]
                  (< (:distance e1) (:distance e2))))
          (first))))
@@ -128,7 +130,7 @@
   "Add an enemy to the state"
   {:test (fn []
            (is (= (-> (create-empty-state)
-                      (add-enemy "nightKing" {:x 350
+                      (add-enemy "nightKing" {:x 440
                                  :y 640})
                       (get :enemies)
                       (first)
@@ -235,9 +237,9 @@
   {:test (fn []
            ; Check that enemy is removed
            (is (= (-> (create-empty-state)
-                      (add-enemy "nightKing" {:x 350
+                      (add-enemy "nightKing" {:x 440
                                  :y 640})
-                      (add-enemy "nightKing" {:x 350
+                      (add-enemy "nightKing" {:x 440
                                  :y 640})
                       (enemy-die 1)
                       (get :enemies)
@@ -245,7 +247,7 @@
                   1))
            ; Check that gold is increased
            (is (= (as-> (create-empty-state) $
-                    (add-enemy $ "nightKing" {:x 350
+                    (add-enemy $ "nightKing" {:x 440
                                :y 640})
                     (enemy-die $ 1)
                     (get $ :gold))
@@ -299,7 +301,7 @@
   "Shoot nearest enemy"
   {:test (fn []
            (is (= (as-> (create-empty-state) $
-                    (add-enemy $ "nightKing" {:x 350
+                    (add-enemy $ "nightKing" {:x 440
                                :y 640})
                     (add-defender $ "aryaStark" {:x 123 :y 321})
                     (shoot $ (get-defender $ 1))
@@ -316,7 +318,7 @@
   "All defenders do their actions if they should"
   {:test (fn []
            (is (= (-> (create-empty-state)
-                      (add-enemy "nightKing" {:x 350
+                      (add-enemy "nightKing" {:x 440
                                  :y 640})
                       (add-defender "aryaStark" {:x 123 :y 321})
                       (defend)
@@ -344,23 +346,24 @@
   [state]
   (reduce
     (fn [state iteration]
-      (let [yPosition (+ 640 (* iteration 50))]
-      (add-enemy state "nightKing" {:x 350 :y yPosition})))
+      (let [yPosition (+ 640 (* iteration 10))]
+      (add-enemy state "nightKing" {:x 440 :y yPosition})))
     state
-    [0 1 2 3 4 5 6 7 8 9]))
+    (range (:wave state))))
 
 (defn maybe-spawn-enemies
   "Spawns enemies if applicable"
   [state]
   (if (= (mod (:tick state) 1000) 0)
-  (spawn-enemies state)
+  (-> (spawn-enemies state)
+  (next-wave))
   state))
 
 (defn start-game
   "Returns start state of the game"
   []
   (-> (create-empty-state)
-      (add-enemy "nightKing" {:x 350
+      (add-enemy "nightKing" {:x 440
                  :y 640})
       (add-defender "aryaStark" {:x 123 :y 321})))
 

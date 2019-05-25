@@ -7,7 +7,7 @@
               "Access-Control-Allow-Methods" "GET,POST"
               "Access-Control-Allow-Headers" "X-Requested-With,Content-Type,Cache-Control,Origin,Accept,Options"
               "Content-Type"                 "application/json; charset=utf-8"})
-              
+
 (defn game-response
   [client-state]
   {:status  200
@@ -28,15 +28,16 @@
          (game-response)))
 
     "/action"
-    (time 
+    (time
     (if (nil? (:body request))
       (game-response {})
     (let [body (clojure.data.json/read-str (slurp (:body request)))
                 action-id (get body "actionId")
                 type (get body "type")
-                position (get body "position")]
+                x (get body "x")
+                y (get body "y")]
             (case action-id
-              "defender" (-> (add-defender! type position)
+              "defender" (-> (add-defender! type {:x x :y y})
                              (game-response))
               (-> (tick!)
                   (game-response))))))
