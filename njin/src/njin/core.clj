@@ -62,6 +62,21 @@
                (assoc :id id))]
     (update state :enemies #(conj % enemy))))
 
+(defn add-defender
+  "Add a defender to the state"
+  {:test (fn []
+           (is (= (-> (create-empty-state)
+                      (add-defender "aryaStark" 1)
+                      (get :defenders)
+                      (first)
+                      (get :type))
+                  "aryaStark")))}
+  [state type id]
+  (let [defender (->
+               (get-definition type)
+               (assoc :id id))]
+    (update state :defenders #(conj % defender))))
+
 (defn update-pos
   "Update the position object according to a vector"
   [{x :x y :y} {dx :x dy :y}]
@@ -131,23 +146,14 @@
                 :y y
                 :range range}})
 
-(defn add-defender
-  "Adds a defender"
-  {:test (fn [] (is (= (-> (create-empty-state)
-                           (add-defender (create-defender {:x 100 :y 100 :range 50}))
-                           (get :defenders)
-                           (count))
-                       1)))}
-  [state defender]
-  (update state :defenders (fn [defenders]
-                            (conj defenders defender)))
-)
+
 
 (defn start-game
   "Returns start state of the game"
   []
   (-> (create-empty-state)
-      (add-enemy "nightKing" 1)))
+      (add-enemy "nightKing" 1)
+      (add-defender "aryaStark" "def1")))
 
 (defn tick
   "Do the ticky thing"
