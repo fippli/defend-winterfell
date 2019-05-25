@@ -65,25 +65,25 @@
                                     :id 1}]}
                       (get-defender 1)
                       (:id))
-                      1)))}
+                  1)))}
   [state defender-id]
   (-> (filter (fn [defender]
                 (= (:id defender) defender-id))
-                (:defenders state))
+              (:defenders state))
       (first)))
 
 (defn get-enemy
   "Gets the enemy with provided id"
   {:test (fn []
            (is (= (-> {:enemies [{:type "nightKing"
-                                    :id 1}]}
+                                  :id 1}]}
                       (get-enemy 1)
                       (:id))
-                      1)))}
+                  1)))}
   [state enemy-id]
   (-> (filter (fn [enemy]
                 (= (:id enemy) enemy-id))
-                (:enemies state))
+              (:enemies state))
       (first)))
 
 (defn get-closest-enemy-in-range
@@ -92,9 +92,9 @@
            (is (= (-> {:enemies [{:id 1
                                   :position {:x 50
                                              :y 50}}
-                                             {:id 2
-                                                                    :position {:x 200
-                                                                               :y 200}}]
+                                 {:id 2
+                                  :position {:x 200
+                                             :y 200}}]
                        :defenders [{:type "aryaStark"
                                     :position {:x 200
                                                :y 200}
@@ -108,15 +108,14 @@
   (let [defender (get-defender state defender-id)
         defenderPosition (:position defender)]
 
-  (->> (map (fn [enemy]
-    (let [enemyPosition (:position enemy)
-    distance (sqrt ( +(expt (- (:x enemyPosition) (:x defenderPosition)) 2)
-      (expt (- (:y enemyPosition) (:y defenderPosition)) 2)))]
-      (assoc enemy :distance distance))) (:enemies state))
-      (sort (fn [e1 e2]
-        (< (:distance e1) (:distance e2))))
-        (first)
-      )))
+    (->> (map (fn [enemy]
+                (let [enemyPosition (:position enemy)
+                      distance (sqrt (+ (expt (- (:x enemyPosition) (:x defenderPosition)) 2)
+                                        (expt (- (:y enemyPosition) (:y defenderPosition)) 2)))]
+                  (assoc enemy :distance distance))) (:enemies state))
+         (sort (fn [e1 e2]
+                 (< (:distance e1) (:distance e2))))
+         (first))))
 
 (defn add-enemy
   "Add an enemy to the state"
@@ -189,6 +188,9 @@
 
 (defn update-all-positions
   "Update the position of all movable object"
+  {:test (fn []
+           (is (= (-> (create-empty-state)
+                      (update-all-positions)))))}
   [state]
   (-> state
       (update :enemies (partial map update-object-position))))
@@ -197,7 +199,7 @@
   "Remove all enemies that matches a predicate"
   [state pred]
   (update state :enemies
-    (partial filter (comp not pred))))
+          (partial filter (comp not pred))))
 
 (defn remove-enemy
   "Remove an enemy with a given id from the board"
@@ -211,13 +213,19 @@
 
 (defn enemy-reached-winterfell-action
   "For each enemy that has reached Winterfell: remove it from board and lose one life."
+  {:test (fn []
+           (is (= (-> (create-empty-state)
+                      (enemy-reached-winterfell-action)
+                      (:enemies)
+                      (count))
+                  0)))}
   [state]
   (reduce
-    (fn [state enemy] (-> state
-                            (remove-enemy (:id enemy))
-                            (lose-a-life)))
-    state
-    (filter enemy-has-reached-Winterfell (:enemies state))))
+   (fn [state enemy] (-> state
+                         (remove-enemy (:id enemy))
+                         (lose-a-life)))
+   state
+   (filter enemy-has-reached-Winterfell (:enemies state))))
 
 (defn enemy-die
   "Actions when an enemy dies"
@@ -237,9 +245,9 @@
                     (get $ :gold))
                   107)))}
   [state enemy-id]
-  (let [killed-enemy (->>(get state :enemies)
-                       (filter (fn [enemy] (= (:id enemy) enemy-id)))
-                       (first))]
+  (let [killed-enemy (->> (get state :enemies)
+                          (filter (fn [enemy] (= (:id enemy) enemy-id)))
+                          (first))]
     (-> state
         (remove-enemy enemy-id)
         (increase-gold (get-bounty killed-enemy)))))
@@ -258,68 +266,64 @@
 
 (defn hurt-enemy
   "Deals damage to the enemy and kills it if too damaged"
-  {:test (fn[]
-    (is (= (hurt-enemy {:enemies [{
-                                      :health 10
-                                      :id 1
-                                      :bounty 1337
-                                      }]
-                           :gold 0} 1 10)
-           {:gold 1337
-            :enemies []}
-           ))
-           (is (= (hurt-enemy {:enemies [{
-                                             :health 60
-                                             :id 1
-                                             :bounty 1337
-                                             }]
-                                  :gold 0} 1 10)
+  {:test (fn []
+           (is (= (hurt-enemy {:enemies [{:health 10
+                                          :id 1
+                                          :bounty 1337}]
+                               :gold 0} 1 10)
+                  {:gold 1337
+                   :enemies []}))
+           (is (= (hurt-enemy {:enemies [{:health 60
+                                          :id 1
+                                          :bounty 1337}]
+                               :gold 0} 1 10)
                   {:gold 0
-                   :enemies [{
-                                                     :health 50
-                                                     :id 1
-                                                     :bounty 1337
-                                                     }]}
-                  )))}
+                   :enemies [{:health 50
+                              :id 1
+                              :bounty 1337}]})))}
   [state enemy-id damage]
-    (let [enemy (get-enemy state enemy-id)]
-  (if (<= (:health enemy) damage)
+  (let [enemy (get-enemy state enemy-id)]
+    (if (<= (:health enemy) damage)
       (enemy-die state enemy-id)
       (modify-enemy state (fn [enemy]
-    (update enemy :health (fn [health]
-      (- health damage)))) enemy-id))))
+                            (update enemy :health (fn [health]
+                                                    (- health damage)))) enemy-id))))
 
 (defn shoot
   "Shoot nearest enemy"
   {:test (fn []
-    (is (= (as-> (create-empty-state) $
-    (add-enemy $ "nightKing" 1)
-    (add-defender $ "aryaStark" {:x 123 :y 321})
-    (shoot $ (get-defender $ 1))
-    (get-enemy $ 1)
-    (:health $))
-    50)))}
+           (is (= (as-> (create-empty-state) $
+                    (add-enemy $ "nightKing" 1)
+                    (add-defender $ "aryaStark" {:x 123 :y 321})
+                    (shoot $ (get-defender $ 1))
+                    (get-enemy $ 1)
+                    (:health $))
+                  50)))}
   [state defender]
   (let [enemy (get-closest-enemy-in-range state (:id defender))]
-    (hurt-enemy state (:id enemy) (:damage defender))))
+  (if (nil? enemy)
+  state
+    (hurt-enemy state (:id enemy) (:damage defender)))))
 
 (defn defend
   "All defenders do their actions if they should"
   {:test (fn []
-    (is (= (-> (create-empty-state)
-    (add-enemy "nightKing" 1)
-    (add-defender "aryaStark" {:x 123 :y 321})
-    (defend)
-    (:enemies)
-    (first)
-    (:health))
-    50)))}
-    [state]
-    (reduce (fn [internalState defender]
-      (if (= (mod (:tick internalState) (:frequency defender)) 0)
-        (shoot internalState defender)
-        internalState))
-      state (:defenders state)))
+           (is (= (-> (create-empty-state)
+                      (add-enemy "nightKing" 1)
+                      (add-defender "aryaStark" {:x 123 :y 321})
+                      (defend)
+                      (:enemies)
+                      (first)
+                      (:health))
+                  50))
+           (is (= (-> (create-empty-state)
+                      (defend)))))}
+  [state]
+  (reduce (fn [internalState defender]
+            (if (= (mod (:tick internalState) (:frequency defender)) 0)
+              (shoot internalState defender)
+              internalState))
+          state (:defenders state)))
 
 (defn start-game
   "Returns start state of the game"
