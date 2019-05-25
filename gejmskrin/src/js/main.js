@@ -44,6 +44,7 @@
     enemies: [{ type: 'nightKing', position: {} }]
   };
 
+
   const canvasElement = document.getElementById('gejmskrin');
   const context = canvasElement.getContext('2d');
 
@@ -57,7 +58,8 @@
 
   const gameloop = state => () => {
     // handle actions
-    drawCanvas(state, canvasElement, context)
+    actionHandler.handleActions(state)
+      .then(drawCanvas(canvasElement, context))
       .then(state => {
         tick(state)();
       })
