@@ -10,9 +10,11 @@
 </head>
 
 <body>
-  <canvas id="gejmskrin" width="960" height="640"></canvas>
-  <div class="action-list">
-    <button onclick="actionHandler.action('place-arya-stark')">Arya Stark</button>
+  <div class="game-layout">
+    <canvas id="gejmskrin" width="960" height="640" onclick="actionHandler.action(event)"></canvas>
+    <div class="action-list">
+      <button onclick="actionHandler.action('choose-arya-stark')">Arya Stark</button>
+    </div>
   </div>
 </body>
 

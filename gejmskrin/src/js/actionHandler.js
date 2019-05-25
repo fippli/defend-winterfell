@@ -1,12 +1,10 @@
 const actionHandler = (() => {
 
-  const towerPrep = {
+  var tower = {
     actionId: "defender",
     type: "aryaStark",
-    position: {
-      x: 123,
-      y: 32,
-    }
+    x: 123,
+    y: 32,
   }
 
   let actionQueue = [];
@@ -15,31 +13,27 @@ const actionHandler = (() => {
     actionQueue = [...actionQueue, action];
   };
 
-  const getActionBody = (actionName) => {
-    console.log("Triggering action:", actionName);
-    return towerPrep;
-  }
+
 
   const handleActions = (state) => new Promise((resolve, reject) => {
     if (actionQueue.length > 0) {
       console.log('Trying action');
-      const actionName = actionQueue.splice(0, 1)[0];
-      const requestBody = getActionBody(actionName)
-      postAction(requestBody)
+      // const actionName = actionQueue.splice(0, 1)[0];
+      postAction(tower)
+        .then(mergeState(state))
         .then(state => {
-          resolve(state)
+          resolve(state);
         })
     } else {
       resolve(state);
     }
   });
 
-  const action = (name) => {
-    switch (name) {
-      case 'place-arya-stark': {
-        addAction('place-arya-stark')
-      }
-    }
+  const action = (event) => {
+    console.log(event);
+    tower.x = event.screenX;
+    tower.y = event.screenY;
+    addAction(name);
   }
 
   return {
